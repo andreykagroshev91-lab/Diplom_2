@@ -3,6 +3,7 @@ package api.steps;
 import api.models.User;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 
 import static api.constants.ApiEndpoints.*;
 import static io.restassured.RestAssured.given;
@@ -50,7 +51,7 @@ public class UserSteps {
     @Step("Проверка успешной регистрации")
     public void validateSuccessfulRegistration(Response response, User user) {
         response.then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body("success", equalTo(true))
                 .body("user.email", equalTo(user.getEmail()))
                 .body("user.name", equalTo(user.getName()))
@@ -61,7 +62,7 @@ public class UserSteps {
     @Step("Проверка ошибки дублирования пользователя")
     public void validateDuplicateUserError(Response response) {
         response.then()
-                .statusCode(403)
+                .statusCode(HttpStatus.SC_FORBIDDEN)
                 .body("success", equalTo(false))
                 .body("message", equalTo("User already exists"));
     }
@@ -69,7 +70,7 @@ public class UserSteps {
     @Step("Проверка ошибки обязательных полей")
     public void validateRequiredFieldsError(Response response) {
         response.then()
-                .statusCode(403)
+                .statusCode(HttpStatus.SC_FORBIDDEN)
                 .body("success", equalTo(false))
                 .body("message", equalTo("Email, password and name are required fields"));
     }
@@ -77,7 +78,7 @@ public class UserSteps {
     @Step("Проверка успешной авторизации")
     public void validateSuccessfulLogin(Response response, User user) {
         response.then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body("success", equalTo(true))
                 .body("user.email", equalTo(user.getEmail()))
                 .body("user.name", equalTo(user.getName()))
@@ -88,7 +89,7 @@ public class UserSteps {
     @Step("Проверка ошибки авторизации")
     public void validateLoginError(Response response) {
         response.then()
-                .statusCode(401)
+                .statusCode(HttpStatus.SC_UNAUTHORIZED)
                 .body("success", equalTo(false))
                 .body("message", equalTo("email or password are incorrect"));
     }

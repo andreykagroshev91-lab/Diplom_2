@@ -3,6 +3,7 @@ package api.steps;
 import api.models.Order;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class OrderSteps {
     @Step("Извлечение ID ингредиентов из ответа")
     public List<String> extractIngredientIds(Response response) {
         return response.then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .extract()
                 .jsonPath()
                 .getList("data._id");
@@ -50,7 +51,7 @@ public class OrderSteps {
     @Step("Проверка успешного создания заказа")
     public void validateSuccessfulOrderCreation(Response response) {
         response.then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body("success", equalTo(true))
                 .body("order.number", notNullValue())
                 .body("name", notNullValue());
@@ -59,7 +60,7 @@ public class OrderSteps {
     @Step("Проверка ошибки отсутствия ингредиентов")
     public void validateNoIngredientsError(Response response) {
         response.then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body("success", equalTo(false))
                 .body("message", equalTo("Ingredient ids must be provided"));
     }
@@ -67,6 +68,6 @@ public class OrderSteps {
     @Step("Проверка ошибки невалидного ингредиента")
     public void validateInvalidIngredientError(Response response) {
         response.then()
-                .statusCode(500);
+                .statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 }
